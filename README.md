@@ -1,16 +1,8 @@
-# hello_world
+Ce projet est une mise en pratique du développement d'une DApp (Application Décentralisée) complète. Il connecte une interface utilisateur mobile/web réalisée avec **Flutter** à un Smart Contract **Ethereum** déployé localement.
 
-A new Flutter project.
+## 📋 Description
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+L'application permet d'interagir avec la Blockchain pour :
+1.  **Lire** une donnée (un nom) stockée dans le Smart Contract.
+2.  **Écrire** une donnée (modifier le nom) via une transaction signée.
+3.  Afficher les changements en temps réel.
