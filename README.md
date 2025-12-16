@@ -1,6 +1,6 @@
 Ce projet est une mise en pratique du développement d'une DApp (Application Décentralisée) complète. Il connecte une interface utilisateur mobile/web réalisée avec **Flutter** à un Smart Contract **Ethereum** déployé localement.
 
-## 📋 Description
+##  Description
 
 L'application permet d'interagir avec la Blockchain pour :
 1.  **Lire** une donnée (un nom) stockée dans le Smart Contract.
