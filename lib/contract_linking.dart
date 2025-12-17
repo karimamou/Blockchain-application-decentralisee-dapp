@@ -4,15 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart'; 
 import 'package:web3dart/web3dart.dart';
 
-
 class ContractLinking extends ChangeNotifier {
   // --- CONFIGURATION ---
-  // Pour Chrome (Web) et Windows, on utilise 127.0.0.1
   final String _rpcUrl = "http://127.0.0.1:7545";
   final String _wsUrl = "ws://127.0.0.1:7545/";
   
-  //  CLÉ PRIVÉE 
-  final String _privateKey = "0x9d58258f0b492003480c05c1e4fc2f06cf9fbc8d016b2fa414b074fd6b1f3548";
+  // VOTRE CLÉ PRIVÉE (Vérifiez bien qu'elle correspond au compte Index 0 de Ganache ouvert)
+  final String _privateKey = "0x0656e9fd967bd81bcaecd5d4add0c19113391e078d9a4ba2381aadf0bf6c15cf";
 
   // --- VARIABLES ---
   late Web3Client _client;
@@ -33,7 +31,7 @@ class ContractLinking extends ChangeNotifier {
   }
 
   initialSetup() async {
-    // MODIFICATION 1 : Connexion HTTP simple (Plus stable pour Chrome)
+    // Connexion HTTP simple
     _client = Web3Client(_rpcUrl, Client());
 
     await getAbi();
@@ -42,7 +40,6 @@ class ContractLinking extends ChangeNotifier {
   }
 
   Future<void> getAbi() async {
-    // Lecture du fichier JSON
     String abiStringFile = await rootBundle.loadString("src/artifacts/HelloWorld.json");
     var jsonAbi = jsonDecode(abiStringFile);
     _abiCode = jsonEncode(jsonAbi["abi"]);
@@ -68,14 +65,18 @@ class ContractLinking extends ChangeNotifier {
   }
 
   Future<void> getName() async {
-    // Lecture simple
-    var currentName = await _client.call(
-      contract: _contract, 
-      function: _yourName, 
-      params: []
-    );
+    try {
+      var currentName = await _client.call(
+        contract: _contract, 
+        function: _yourName, 
+        params: []
+      );
+      deployedName = currentName[0];
+    } catch(e) {
+      print("Erreur lecture: $e");
+      deployedName = "Erreur";
+    }
     
-    deployedName = currentName[0];
     isLoading = false;
     notifyListeners();
   }
@@ -84,16 +85,24 @@ class ContractLinking extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     
-    //5777' pour éviter l'attente infinie
-    await _client.sendTransaction(
-      _credentials,
-      Transaction.callContract(
-        contract: _contract, 
-        function: _setName, 
-        parameters: [nameToSet]
-      ),
-      chainId: 5777 
-    );
+    print("Envoi de la transaction pour : $nameToSet");
+
+    try {
+      await _client.sendTransaction(
+        _credentials,
+        Transaction.callContract(
+          contract: _contract, 
+          function: _setName, 
+          parameters: [nameToSet],
+          maxGas: 1000000, 
+          gasPrice: EtherAmount.inWei(BigInt.from(20000000000)), // 20 Gwei
+        ),
+        chainId: 1337 
+      );
+      print("Transaction envoyée avec succès !");
+    } catch (e) {
+      print("ERREUR TRANSACTION : $e");
+    }
     
     await getName();
   }
